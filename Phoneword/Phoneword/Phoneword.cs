@@ -29,18 +29,61 @@ namespace Phoneword
 
 	public class MainPage : ContentPage
 	{
+		Entry phoneNumberText;
+		Button translateButton;
+		Button callButton;
+		string translatedNumber;
+
 		public MainPage()
 		{
-			Content = new StackLayout
+			this.Padding = new Thickness(20, Device.OnPlatform(40, 20, 20), 20, 20);
+			StackLayout panel = new StackLayout
 			{
-				VerticalOptions = LayoutOptions.Center,
-				Children = {
-					new Label {
-						HorizontalTextAlignment = TextAlignment.Center,
-						Text = "Welcome to Phoneword!!"
-					}
-				}
+				VerticalOptions = LayoutOptions.FillAndExpand,
+				HorizontalOptions = LayoutOptions.FillAndExpand,
+				Orientation = StackOrientation.Vertical,
+				Spacing = 15,
 			};
+			Label commandLabel = new Label
+			{
+				Text = "Enter a Phoneword:",
+			};
+			phoneNumberText = new Entry
+			{
+				Text = "1-855-XAMARIN",
+			};
+			translateButton = new Button
+			{
+				Text = "Translate",
+			};
+			translateButton.Clicked += OnTranslate;
+			callButton = new Button
+			{
+				Text = "Call",
+				IsEnabled = false,
+			};
+			panel.Children.Add(commandLabel);
+			panel.Children.Add(phoneNumberText);
+			panel.Children.Add(translateButton);
+			panel.Children.Add(callButton);
+
+			this.Content = panel;
+		}
+
+		void OnTranslate(object sender, System.EventArgs e)
+		{
+			translatedNumber = Core.PhonewordTranslator.ToNumber(phoneNumberText.Text);
+
+			if (!string.IsNullOrEmpty(translatedNumber))
+			{
+				callButton.IsEnabled = true;
+				callButton.Text = "Call " + translatedNumber;
+			}
+			else
+			{
+				callButton.IsEnabled = false;
+				callButton.Text = "Call";
+			}
 		}
 	}
 }
